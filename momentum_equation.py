@@ -6,13 +6,21 @@ Created on Mon Jun 29 10:55:08 2020
 @author: amelielaurens
 """
 
-#jjj
 import numpy
 import matplotlib.pyplot as plt
 from math import *
 from models import *
 
-N = 20
+def momentum_equation(Fiber_diameter, delta_x, rho, pol_flow_rate, Fr, gravitational_acceleration, Cf, rho_a, ua, coef_j, k):
+    return (1/Fiber_diameter[k]**2+delta_x*pi*rho/(4*pol_flow_rate**2)*((Fr[k+1]-Fr[k])/delta_x+pi*Fiber_diameter[k]**2*rho*gravitational_acceleration/4-coef_j*pi*Fiber_diameter[k]*Cf[k]*rho_a/2*(ua-4*pol_flow_rate/(pi*Fiber_diameter[k]**2*rho))**2))**(-1/2)
+
+
+# Discrétisation
+N = 20 #Plus N est grand plus la discrétisation est fine
+x_hat = numpy.linspace(0, 0.2, N)
+delta_x = x_hat[1] - x_hat[0]
+
+# Définition des constantes
 rho = 900.
 pol_flow_rate = 0.000012
 gravitational_acceleration = 9.81
@@ -24,34 +32,34 @@ ua = 25.7
 va = 1.169*10**(-5)
 beta=0.78
 cst_n = 0.61
-x_hat = numpy.linspace(0, 0.2, N)
-delta_x = x_hat[1] - x_hat[0]
-Fiber_diameter_0 = 0.000407
-Fiber_diameter = [Fiber_diameter_0]
-Fiber_diameter_int = Fiber_diameter_0
-Cxx = []
-Cyy = []
-Fr = []
-Re = []
-Cf = []
+
+# Initialisation : on rentre les conditions initiales
+Fiber_diameter = [0.000407]
+Cxx = [366757]
+Cyy = [-183378]
+Fr = [0.007335137]
+Re = [275.3]
+Cf = [0.0253403]
 fiber_velocity = [ua]
+
 for k in range(N//2):
-    fiber_velocity.append(4*pol_flow_rate/(pi*Fiber_diameter_int**2*rho))
+    coef_j=1
+    fiber_velocity.append(4*pol_flow_rate/(pi*Fiber_diameter[k]**2*rho))
     Cxx, Cyy = constitutive_equation(eta, cst_m, fiber_velocity, N)
-    Fr.append(rheological_force(Fiber_diameter_int, Cxx[k], Cyy[k]))
-    Re.append(Reynolds(Fiber_diameter_int, ua, fiber_velocity[k+1], va))
+    Fr.append(rheological_force(Fiber_diameter[k], Cxx[k], Cyy[k]))
+    Re.append(Reynolds(Fiber_diameter[k], ua, fiber_velocity[k], va))
+    #import pdb; pdb.set_trace()
     Cf.append(Drag_coefficient(Re[k], beta, cst_n))
-    Fiber_diameter_int = (1/Fiber_diameter_int**2+delta_x*pi*rho/(4*pol_flow_rate**2)*((Fr[k+1]-Fr[k])/delta_x+pi*Fiber_diameter_int**2*rho*gravitational_acceleration/4-pi*Fiber_diameter_int*Cf[k+1]*rho_a/2*(ua-4*pol_flow_rate/(pi*Fiber_diameter_int**2*rho))**2))**(-1/2)
-    Fiber_diameter.append(Fiber_diameter_int)
-for k in range(N//2+1,N-1):
-    fiber_velocity.append(4*pol_flow_rate/(pi*Fiber_diameter_int**2*rho))
+    Fiber_diameter.append(momentum_equation(Fiber_diameter, delta_x, rho, pol_flow_rate, Fr, gravitational_acceleration, Cf, rho_a, ua, coef_j, k))
+for k in range(N//2+1,N):
+    coef_j=-1
+    fiber_velocity.append(4*pol_flow_rate/(pi*Fiber_diameter[k]**2*rho))
     Cxx, Cyy = constitutive_equation(eta, cst_m, fiber_velocity, N)    
-    Fr.append(rheological_force(Fiber_diameter_int, Cxx[k], Cyy[k]))
-    Re.append(Reynolds(Fiber_diameter_int, ua, fiber_velocity[k+1], va))
+    Fr.append(rheological_force(Fiber_diameter[k], Cxx[k], Cyy[k]))
+    Re.append(Reynolds(Fiber_diameter[k], ua, fiber_velocity[k+1], va))
     Cf.append(Drag_coefficient(Re[k], beta, cst_n))
-    Fiber_diameter_int = (1/Fiber_diameter_int**2+delta_x*pi*rho/(4*pol_flow_rate**2)*((Fr[k+1]-Fr[k])/delta_x+pi*Fiber_diameter_int**2*rho*gravitational_acceleration/4+pi*Fiber_diameter_int*Cf[k+1]*rho_a/2*(ua-4*pol_flow_rate/(pi*Fiber_diameter_int**2*rho))**2))**(-1/2)
-    Fiber_diameter.append(Fiber_diameter_int)
-Fiber_diameter_int = (1/Fiber_diameter_int**2+delta_x*pi*rho/(4*pol_flow_rate**2)*((Fr[k+1]-Fr[k])/delta_x+pi*Fiber_diameter_int**2*rho*gravitational_acceleration/4+pi*Fiber_diameter_int*Cf[k+1]*rho_a/2*(ua-4*pol_flow_rate/(pi*Fiber_diameter_int**2*rho))**2))**(-1/2)
+    Fiber_diameter.append(momentum_equation(Fiber_diameter, delta_x, rho, pol_flow_rate, Fr, gravitational_acceleration, Cf, rho_a, ua, coef_j, k))
+
 Fiber_diameter=numpy.array(Fiber_diameter)
 
 
