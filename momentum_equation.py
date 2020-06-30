@@ -6,7 +6,7 @@ Created on Mon Jun 29 10:55:08 2020
 @author: amelielaurens
 """
 
-
+#jjj
 import numpy
 import matplotlib.pyplot as plt
 from math import *
