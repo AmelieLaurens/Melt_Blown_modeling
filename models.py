@@ -92,16 +92,36 @@ def Drag_coefficient(Rey, beta, n):
      
      """
      
-def constitutive_equation(eta, cst_m, fiber_velocity, N):
-    Cxx=[]
-    Cyy=[]
-    x_hat = numpy.linspace(0, 0.2, N)
+#def constitutive_equation(eta, cst_m, fiber_velocity, N):
+#    Cxx=[]
+#    Cyy=[]
+#    x_hat = numpy.linspace(0, 0.2, N)
+#    delta_x = x_hat[1] - x_hat[0]
+#    u_prime=0.
+#    for i in range(1,len(fiber_velocity)-1):
+#        u_prime=(fiber_velocity[i+1]-fiber_velocity[i])/delta_x
+#        Cxx.append(2*eta*(u_prime)**cst_m)
+#        Cyy.append(-eta*(u_prime)**cst_m)
+#    Cxx = numpy.array(Cxx)
+#    Cyy = numpy.array(Cyy)
+#    return Cxx, Cyy
+
+def constitutive_equation_Cxx(eta, cst_m, fiber_velocity1, fiber_velocity2, N):
+    x_hat = numpy.linspace(0, 20, N)
     delta_x = x_hat[1] - x_hat[0]
-    u_prime=0.
-    for i in range(1,len(fiber_velocity)):
-        u_prime=(fiber_velocity[i]-fiber_velocity[i-1])/delta_x
-        Cxx.append(2*eta*(u_prime)**cst_m)
-        Cyy.append(-eta*(u_prime)**cst_m)
-    Cxx = numpy.array(Cxx)
-    Cyy = numpy.array(Cyy)
-    return Cxx, Cyy
+    if fiber_velocity1==fiber_velocity2:
+        return 0
+    else:
+        u_prime=(fiber_velocity2-fiber_velocity1)/delta_x
+        return 2*eta*(u_prime)**cst_m
+    
+
+def constitutive_equation_Cyy(eta, cst_m, fiber_velocity1, fiber_velocity2, N):
+    x_hat = numpy.linspace(0, 20, N)
+    delta_x = x_hat[1] - x_hat[0]
+    if fiber_velocity1==fiber_velocity2:
+        return 0
+    else:
+        u_prime=(fiber_velocity2-fiber_velocity1)/delta_x
+        return -eta*(u_prime)**cst_m
+    
