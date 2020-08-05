@@ -26,7 +26,6 @@ rho = 900.
 pol_flow_rate = 0.000012
 gravitational_acceleration = 9.81
 rho_a = 1.20
-ua = 25.7
 eta = 3000
 cst_m = 0.78
 ua = 0.257
@@ -57,7 +56,7 @@ for k in range(N):
     Fiber_diameter.append(momentum_equation(Fiber_diameter[k], delta_x, rho, pol_flow_rate, Fr1, Fr2, gravitational_acceleration, Cf[k], rho_a, ua, coef_j[k], fiber_velocity[k]))
     
 Fiber_diameter = numpy.array(Fiber_diameter)
-# import pdb; pdb.set_trace()
+import pdb; pdb.set_trace()
 
 # Draw the figure 
 fig = plt.figure()
