@@ -138,11 +138,8 @@ def constitutive_equation_Cxx(eta, cst_m, fiber_velocity1, fiber_velocity2, delt
     (float) - Axial tensile stress of polymer Cxx (Pa)
 
     """
-    if fiber_velocity1==fiber_velocity2:
-        return 0
-    else:
-        u_prime=(fiber_velocity2-fiber_velocity1)/delta_x
-        return 2*eta*(u_prime)**cst_m
+    u_prime=(fiber_velocity2-fiber_velocity1)/delta_x
+    return 2*eta*(u_prime)**cst_m
 
 
 def constitutive_equation_Cyy(eta, cst_m, fiber_velocity1, fiber_velocity2, delta_x):
@@ -159,8 +156,5 @@ def constitutive_equation_Cyy(eta, cst_m, fiber_velocity1, fiber_velocity2, delt
     (float) - Transversal tensile stress of polymer Cyy (Pa)
 
     """
-    if fiber_velocity1==fiber_velocity2:
-        return 0
-    else:
-        u_prime=(fiber_velocity2-fiber_velocity1)/delta_x
-        return -eta*(u_prime)**cst_m
+    u_prime=(fiber_velocity2-fiber_velocity1)/delta_x
+    return -eta*(u_prime)**cst_m
